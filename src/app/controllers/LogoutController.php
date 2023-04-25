@@ -16,6 +16,6 @@ class LogoutController extends Controller
             $this->cookies->set('pass', $this->session->get('password'), time() - 15 * 86400);
         }
 
-        $this->response->redirect('login/index');
+        $this->response->redirect('signup/index');
     }
 }

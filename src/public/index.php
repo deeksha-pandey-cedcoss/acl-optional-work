@@ -33,7 +33,7 @@ $loader->registerDirs(
 
 $loader->registerNamespaces(
     [
-        'app\Assets' => APP_PATH ."/assets/",
+        'time' => APP_PATH ."/assets/",
     ]
 );
 $loader->register();

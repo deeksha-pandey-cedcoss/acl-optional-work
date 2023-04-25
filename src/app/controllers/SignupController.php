@@ -30,9 +30,13 @@ class SignupController extends Controller
         $this->session->set('email', $user->email);
         $this->session->set('password', $user->password);
 
-        if (isset($_POST['remember'])) {
+        if (isset($_POST['remember'])=="on") {
         $this->cookies->set('email', $this->session->get('email'), time() + 15 * 86400);
         $this->cookies->set('pass', $this->session->get('password'), time() + 15 * 86400);
+        }
+        else{
+            $this->cookies->set('email', $this->session->get('email'), time() - 15 * 86400);
+            $this->cookies->set('pass', $this->session->get('password'), time() - 15 * 86400);
         }
 
         $this->view->success = $success;
