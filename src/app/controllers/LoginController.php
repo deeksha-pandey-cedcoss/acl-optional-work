@@ -1,6 +1,7 @@
 <?php
 
 use Phalcon\Mvc\Controller;
+use Phalcon\Http\Response;
 // login controller
 class LoginController extends Controller
 {
@@ -23,13 +24,19 @@ class LoginController extends Controller
         }
 
         $success = Users::findFirst(array("email = ?0", "bind" => array($email)));
-
+        
         if ($success) {
             $this->view->message = "LOGIN SUCCESSFULLY";
+            $this->response->redirect('dashboard/index');
         } else {
+            $response = new Response();
+
+            $response->setStatusCode(403, 'Not Found');
+            $response->setContent("Sorry, Credentials does not match");
+            $response->send();
             $this->view->message = "Not Login succesfully ";
+
         }
 
-        $this->response->redirect('dashboard/index');
     }
 }

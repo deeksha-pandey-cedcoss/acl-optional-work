@@ -6,6 +6,7 @@ class Time {
 
     public  function dat() {
 
-        return date("Y-m-d");
+        date_default_timezone_set('Asia/Kolkata');
+        return date("Y-m-d h:i:sa");
     }
 }

@@ -8,6 +8,7 @@ class SignupController extends Controller
     public function IndexAction()
     {
         // defalut action
+       
         
     }
 

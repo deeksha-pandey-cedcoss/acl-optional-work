@@ -13,6 +13,7 @@ use Phalcon\Session\Adapter\Stream;
 use Phalcon\Http\Response\Cookies;
 use time\Time;
 
+
 $config = new Config([]);
 
 // Define some absolute path constants to aid in locating resources
@@ -29,11 +30,10 @@ $loader->registerDirs(
         APP_PATH . "/etc/",
     ]
 );
-// registering namespace
+
 $loader->registerNamespaces(
     [
-       'time' => APP_PATH . "/assets/",
-      
+        'app\Assets' => APP_PATH ."/assets/",
     ]
 );
 $loader->register();
