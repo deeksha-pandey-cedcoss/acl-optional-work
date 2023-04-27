@@ -8,8 +8,8 @@ class SignupController extends Controller
     public function IndexAction()
     {
         // defalut action
-       
-        
+
+
     }
 
     public function registerAction()
@@ -22,19 +22,18 @@ class SignupController extends Controller
                 'name',
                 'email',
                 'password',
-                
+
             ]
         );
-            $success = $user->save();
+        $success = $user->save();
         $this->session->set('name', $user->name);
         $this->session->set('email', $user->email);
         $this->session->set('password', $user->password);
 
-        if (isset($_POST['remember'])=="on") {
-        $this->cookies->set('email', $this->session->get('email'), time() + 15 * 86400);
-        $this->cookies->set('pass', $this->session->get('password'), time() + 15 * 86400);
-        }
-        else{
+        if (isset($_POST['remember']) == "on") {
+            $this->cookies->set('email', $this->session->get('email'), time() + 15 * 86400);
+            $this->cookies->set('pass', $this->session->get('password'), time() + 15 * 86400);
+        } else {
             $this->cookies->set('email', $this->session->get('email'), time() - 15 * 86400);
             $this->cookies->set('pass', $this->session->get('password'), time() - 15 * 86400);
         }
@@ -47,5 +46,4 @@ class SignupController extends Controller
         }
         $this->response->redirect('login/index');
     }
-    }
-   
+}

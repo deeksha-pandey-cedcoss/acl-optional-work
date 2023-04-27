@@ -12,6 +12,7 @@ use Phalcon\Session\Manager;
 use Phalcon\Session\Adapter\Stream;
 use Phalcon\Http\Response\Cookies;
 use time\Time;
+use listen\Listner;
 
 
 $config = new Config([]);
@@ -33,7 +34,15 @@ $loader->registerDirs(
 
 $loader->registerNamespaces(
     [
-        'time' => APP_PATH ."/assets/",
+        'time' => APP_PATH . "/assets/",
+        'MyApp\handler' => APP_PATH . '/handlers/',
+        'listen' => APP_PATH . "/handlers/"
+    ]
+);
+$loader->registerclasses(
+    [
+        'listner' => APP_PATH . "/listner/listner.php",
+        'Listner'   => APP_PATH . '/handlers/Listner.php',
     ]
 );
 $loader->register();
@@ -63,15 +72,15 @@ $container->set(
 $container->set(
     'db',
     function () {
-     return new Mysql($this['config']->db->toArray());
+        return new Mysql($this['config']->db->toArray());
     }
 );
 $container->set(
     'config',
     function () {
-        $fileName='../app/etc/config.php';
-        $factory= new ConfigFactory();
-        return $config=$factory->newInstance('php', $fileName);
+        $fileName = '../app/etc/config.php';
+        $factory = new ConfigFactory();
+        return $config = $factory->newInstance('php', $fileName);
     }
 );
 $container->setShared(
@@ -79,13 +88,13 @@ $container->setShared(
     function () {
         $session = new Manager();
         $files = new Stream(
-    [
-        'savePath' => '/tmp',
-    ]
-);
+            [
+                'savePath' => '/tmp',
+            ]
+        );
 
-$session->setAdapter($files)->start();
-return $session;
+        $session->setAdapter($files)->start();
+        return $session;
     }
 
 );
@@ -99,7 +108,7 @@ $container->set('cookies', function () {
 $container->set(
     'time',
     function () {
-       return new Time();
+        return new Time();
     }
 );
 
@@ -113,7 +122,20 @@ $container->set(
     true
 );
 
+$eventsManager = $container->get('eventsManager');
+$eventsManager->attach(
+    'application:beforeHandleRequest',
+    new Listner()
+);
+$container->set(
+    'EventsManager',
+    $eventsManager
+);
+
 $application = new Application($container);
+
+$application->setEventsManager($eventsManager);
+
 try {
     // Handle the request
     $response = $application->handle(

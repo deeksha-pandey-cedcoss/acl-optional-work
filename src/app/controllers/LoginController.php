@@ -24,7 +24,7 @@ class LoginController extends Controller
         }
 
         $success = Users::findFirst(array("email = ?0", "bind" => array($email)));
-        
+
         if ($success) {
             $this->view->message = "LOGIN SUCCESSFULLY";
             $this->response->redirect('dashboard/index');
@@ -35,8 +35,6 @@ class LoginController extends Controller
             $response->setContent("Sorry, Credentials does not match");
             $response->send();
             $this->view->message = "Not Login succesfully ";
-
         }
-
     }
 }

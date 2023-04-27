@@ -2,9 +2,11 @@
 
 namespace time;
 // class time
-class Time {
+class Time
+{
 
-    public  function dat() {
+    public  function dat()
+    {
 
         date_default_timezone_set('Asia/Kolkata');
         return date("Y-m-d h:i:sa");
