@@ -2,6 +2,7 @@
 
 namespace listen;
 
+use Phalcon\Acl\Enum;
 use Phalcon\Acl\Adapter\Memory;
 use Phalcon\Events\Event;
 use Phalcon\Mvc\Dispatcher;
@@ -12,44 +13,66 @@ class Listner extends Injectable
 {
     public function beforeHandleRequest(Event $event, Application $app, Dispatcher $dispatcher)
     {
-
-        $acl = new Memory();
-
-        $acl->addRole('user');
-        $acl->addRole('guest');
-        $acl->addRole('admin');
-
-
-        $acl->addComponent(
-            'index',
-            [
+        $aclFile = APP_PATH . '/security/acl.cache';
+        if (true !== is_file($aclFile)) {
+            $acl = new Memory();
+            $acl->setDefaultAction(Enum::DENY);
+            $acl->addRole('user');
+            $acl->addRole('guest');
+            $acl->addRole('admin');
+            $acl->addRole('manager');
+            $acl->addComponent(
                 'index',
+                [
+                    'index',
 
-            ]
-        );
-        $acl->addComponent(
-            'login',
-            [
+                ]
+            );
+            $acl->addComponent(
                 'login',
-                'index'
-            ]
-        );
-        $acl->addComponent(
-            'signup',
-            [
-                'register',
-                'index'
+                [
+                    'login',
+                    'index'
+                ]
+            );
+            $acl->addComponent(
+                'signup',
+                [
+                    'register',
+                    'index'
 
-            ]
-        );
-        $acl->addComponent(
-            'dashboard',
-            [
-                'logout',
-                'index'
+                ]
+            );
+            $acl->addComponent(
+                'dashboard',
+                [
+                    'logout',
+                    'index'
 
-            ]
-        );
+                ]
+            );
+            $acl->allow('user', 'index', 'index');
+            $acl->allow("user", 'login', 'login');
+            $acl->allow("user", 'login', 'index');
+            $acl->allow("user", 'signup', 'index');
+            $acl->allow("user", 'signup', 'register');
+            $acl->allow('user', 'dashboard', 'index');
+            $acl->allow('user', 'dashboard', 'logout');
+            $acl->allow("guest", 'signup', 'register');
+            $acl->allow("guest", 'signup', 'index');
+            $acl->allow("guest", 'index', 'index');
+            $acl->allow("admin", '*', '*');
+            $acl->deny("manager", "*", "*");
+
+            file_put_contents(
+                $aclFile,
+                serialize($acl)
+            );
+        } else {
+            $acl = unserialize(
+                file_get_contents($aclFile)
+            );
+        }
         $action = "index";
         $controller = "index";
         $role = "guest";
@@ -63,24 +86,13 @@ class Listner extends Injectable
         if (!empty($app->request->get('role'))) {
             $role =  $app->request->get('role');
         }
-
-        $acl->allow('user', 'index', 'index');
-        $acl->allow("user", 'login', 'login');
-        $acl->allow("user", 'login', 'index');
-        $acl->allow("user", 'signup', 'index');
-        $acl->allow("user", 'signup', 'register');
-        $acl->allow('user', 'dashboard', 'index');
-        $acl->allow('user', 'dashboard', 'logout');
-        $acl->allow("guest", 'signup', 'register');
-        $acl->allow("guest", 'signup', 'index');
-        $acl->allow("guest", 'index', 'index');
-        $acl->allow("admin", '*', '*');
-
-        if (1 == $acl->isAllowed($role, $controller, $action)) {
-            echo "Permission granted";
+        if (true === $acl->isAllowed($role, $controller, $action)) {
+            echo 'Access granted!';
         } else {
-            echo "Permission denied ";
-            die;
+            echo 'Access denied :(';
+            // die;
+            $this->response->redirect('index/index');
+            
         }
     }
 }

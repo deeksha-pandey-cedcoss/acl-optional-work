@@ -4,7 +4,6 @@ namespace time;
 // class time
 class Time
 {
-
     public  function dat()
     {
 

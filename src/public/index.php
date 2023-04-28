@@ -67,8 +67,6 @@ $container->set(
     }
 );
 
-
-
 $container->set(
     'db',
     function () {

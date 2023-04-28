@@ -2,14 +2,13 @@
 
 use Phalcon\Mvc\Controller;
 use Phalcon\Http\Response;
-// login controller
+
 class LoginController extends Controller
 {
     public function indexAction()
     {
         // default login view
     }
-    // login action page
     public function loginAction()
     {
         if ($this->request->isPost()) {
